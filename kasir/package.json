@@ -1,0 +1,13 @@
+{
+  "name": "toko-server",
+  "version": "1.0.0",
+  "description": "Server sederhana untuk mengupdate products.js saat produk ditambahkan via UI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^4.18.0"
+  }
+}

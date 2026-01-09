@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ottibonynyo Store</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- header -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">TC</div>
+      <div>
+        <div class="site-title">OTTIBONYNYO STORE</div>
+        <div class="site-sub">Modern Store</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="openAddProduct" class="btn">➕ Tambah Produk</button>
+      <button id="openReports" class="btn">📊 Laporan</button>
+      <div id="cartBtn" class="cart-btn">🛒 <span id="cartCount">0</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- main -->
+<main class="container">
+  <section class="controls">
+    <div class="controls-left">
+      <div id="categories" class="categories"></div>
+    </div>
+    <div class="controls-right">
+      <div class="search-wrap"><input id="search" placeholder="Cari produk..." /></div>
+    </div>
+  </section>
+
+  <section id="products" class="products-grid"></section>
+</main>
+
+  <!-- Cart panel -->
+  <aside id="cartPanel" class="panel hidden">
+    <button class="close" id="closeCart">✕</button>
+    <h2>Keranjang</h2>
+    <div class="panel-inner">
+      <div id="cartItems" class="cart-items"></div>
+      <div class="cart-summary">
+        <div>Subtotal: <span id="subtotal">0</span></div>
+        <div>Total Items: <span id="totalItems">0</span></div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button id="checkoutBtn" class="btn primary" disabled>Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Add/Edit Product panel (admin, in-memory or server-backed) -->
+  <aside id="addProductPanel" class="panel hidden">
+    <button class="close" id="closeAddProduct">✕</button>
+    <h2 id="addProductTitle">Tambah Produk</h2>
+    <div class="panel-inner">
+      <form id="addProductForm" class="form">
+        <input id="editingId" type="hidden" />
+        <div class="field" style="margin:8px 0">
+          <label>Nama Produk</label>
+          <input id="addName" required placeholder="Contoh: Kaos Lengan Pendek" />
+        </div>
+        <div class="field" style="margin:8px 0">
+          <label>Kategori (pilih dari daftar atau ketik baru)</label>
+          <input id="addCategory" list="categoriesList" required placeholder="Pilih atau ketik kategori baru" />
+          <datalist id="categoriesList"></datalist>
+        </div>
+        <div class="field" style="margin:8px 0">
+          <label>Harga (angka, tanpa simbol)</label>
+          <input id="addPrice" type="number" min="0" required placeholder="50000" />
+        </div>
+        <div class="field" style="margin:8px 0">
+          <label>URL Gambar (opsional)</label>
+          <input id="addImage" placeholder="https://..." />
+        </div>
+
+        <div class="field" style="margin:8px 0">
+          <label>Admin Secret (opsional untuk server)</label>
+          <input id="adminSecret" type="password" placeholder="Ketik secret jika server pakai proteksi" />
+        </div>
+
+        <div class="helper" style="margin:8px 0;color:var(--muted);font-size:0.9rem">
+          Produk akan ditambahkan ke memori dan muncul di daftar. Jika server tersedia, client akan mencoba menyimpan ke server.
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+          <button type="button" id="cancelAdd" class="btn ghost">Batal</button>
+          <button type="submit" id="saveProductBtn" class="btn primary">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Reports panel -->
+  <aside id="reportsPanel" class="panel hidden" style="width:560px">
+    <button class="close" id="closeReports">✕</button>
+    <h2>Laporan Transaksi</h2>
+    <div class="panel-inner">
+      <div style="margin-bottom:12px">
+        <strong>Ringkasan</strong>
+        <div style="margin-top:8px">
+          <div>30 hari terakhir — Total transaksi: <span id="reportCount30">0</span>, Pendapatan: <span id="reportTotal30">Rp0</span></div>
+          <div>365 hari terakhir — Total transaksi: <span id="reportCount365">0</span>, Pendapatan: <span id="reportTotal365">Rp0</span></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <strong>Transaksi Terbaru</strong>
+        <div id="reportList" style="max-height:320px;overflow:auto;margin-top:8px;padding-right:6px"></div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button id="exportReports" class="btn ghost">Export JSON</button>
+      <button id="clearReports" class="btn danger">Hapus Semua Log</button>
+    </div>
+  </aside>
+
+  <!-- Checkout panel -->
+  <aside id="checkoutPanel" class="panel hidden" data-merchant-qr="./otbqris.jpeg">
+    <button class="close" id="closeCheckout">✕</button>
+    <h2>Checkout</h2>
+    <div class="panel-inner">
+      <div id="orderSummary"></div>
+
+      <h3>Pilih Metode Pembayaran</h3>
+      <div class="payment-methods">
+        <label><input type="radio" name="payment" value="qris" checked /> QRIS</label>
+        <label><input type="radio" name="payment" value="cash" /> Tunai</label>
+      </div>
+
+      <div id="qrisSection">
+        <div class="form">
+          <div class="field">
+            <p>Scan QR untuk membayar total.</p>
+            <img id="qrisImage" alt="QRIS" />
+            <p id="qrisInfo" class="helper"></p>
+          </div>
+          <div class="actions" style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button id="confirmQris" class="btn primary">Selesai (Bayar)</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="cashSection" class="hidden">
+        <div class="form">
+          <div class="field">
+            <label>Jumlah Tunai (masukkan nominal yang diberikan pelanggan):</label>
+            <input type="number" id="cashInput" min="0" step="1" />
+          </div>
+          <div class="field cashResult">
+            <div>Jumlah Bayar: <span id="cashTotal">0</span></div>
+            <div>Uang Diterima: <span id="cashReceived">0</span></div>
+            <div>Kembalian: <span id="cashChange">0</span></div>
+            <div id="cashMessage" class="muted helper"></div>
+          </div>
+          <div class="actions" style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+            <button id="confirmCash" class="btn primary" disabled>Selesai (Terima Tunai)</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="receipt" class="hidden">
+        <h3>Struk</h3>
+        <pre id="receiptText"></pre>
+        <button id="printReceipt" class="btn primary">Cetak / Print</button>
+      </div>
+    </div>
+  </aside>
+
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+  <script src="draggabel-panels.js"></script>
+</body>
+</html>

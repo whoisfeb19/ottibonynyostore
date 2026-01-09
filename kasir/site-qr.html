@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QR untuk https://ottibonynyostore.netlify.app/</title>
+  <style>
+    body{ font-family: Inter, system-ui, Arial; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; background:#f6fbff; }
+    .card{ background:#fff; padding:20px; border-radius:12px; box-shadow:0 12px 40px rgba(12,28,54,0.06); text-align:center; max-width:420px; }
+    img{ width:300px; height:300px; border-radius:8px; border:1px solid rgba(16,24,40,0.04); }
+    .actions{ margin-top:12px; display:flex; gap:8px; justify-content:center; }
+    button{ padding:10px 14px; border-radius:10px; border:none; background:#2b6cb0; color:#fff; cursor:pointer; }
+    a { color:var(--primary, #2b6cb0); }
+    .note{ font-size:0.9rem; color:#556; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>QR untuk membuka situs</h2>
+    <p style="margin:6px 0 12px 0; color:#334;">Scan QR ini untuk membuka:<br><strong>website ottibonynyo store</strong></p>
+    <img id="qrImg" src="https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=https%3A%2F%2Fhmpsihusn.netlify.app%2F&chld=L|1" alt="QR code" />
+    <div class="actions">
+      <button id="downloadBtn">Download PNG</button>
+      <button id="copyLink">Salin link</button>
+    </div>
+    <p class="note">Catatan: Gambar QR dihasilkan oleh Google Chart API saat halaman dibuka. Gunakan tombol "Download PNG" untuk menyimpannya sebagai file PNG.</p>
+  </div>
+
+  <script>
+    const url = 'https://ottibonynyostore.netlify.app/';
+    const googleSrc = `https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=${encodeURIComponent(url)}&chld=L|1`;
+    const backupSrc = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(url)}`;
+    const img = document.getElementById('qrImg');
+
+    // Try primary (Google). If it fails, try backup (qrserver). If both fail, show fallback UI.
+    function showFallbackMessage() {
+      const card = img.closest('.card');
+      img.remove();
+      const msg = document.createElement('div');
+      msg.style.marginTop = '10px';
+      msg.style.color = '#334';
+      msg.innerHTML = `
+        <p style="margin:6px 0 0 0;">Gagal memuat QR dari layanan eksternal. Silakan salin link atau unduh manual:</p>
+        <pre style="background:#f3f7fb;padding:8px;border-radius:6px;border:1px solid rgba(16,24,40,0.04);">${url}</pre>
+      `;
+      card.appendChild(msg);
+    }
+
+    function tryBackup() {
+      img.onerror = () => { img.onerror = null; img.src = backupSrc; };
+      img.src = backupSrc;
+      // if backup also fails, after a short delay, show fallback
+      setTimeout(() => {
+        if (!img.complete || img.naturalWidth === 0) showFallbackMessage();
+      }, 900);
+    }
+
+    // primary attempt
+    img.onerror = () => { img.onerror = null; tryBackup(); };
+    img.src = googleSrc;
+
+    document.getElementById('copyLink').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(url); alert('Link disalin ke clipboard'); }
+      catch (e) { prompt('Salin link ini:', url); }
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      // prefer to download whatever image is currently visible (or fallback to googleSrc)
+      const src = img && img.src ? img.src : googleSrc;
+      fetch(src).then(r => r.blob()).then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'site-qr.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      }).catch(err => {
+        alert('Gagal mengunduh otomatis — silakan klik kanan pada gambar (jika muncul) dan pilih "Save image as..." atau gunakan tombol Salin link.');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+:root{ --primary:#2b6cb0; --muted:#6b7280; --bg:#f6f9ff; --card:#fff; }
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial;margin:0;background:var(--bg);color:#0f1724}
+.cust-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(90deg,#fff,#f3f8ff);border-bottom:1px solid rgba(16,24,40,0.04)}
+.cust-container{display:grid;grid-template-columns:1fr 320px;gap:18px;max-width:1100px;margin:18px auto;padding:0 16px}
+.cust-products{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.prod-card{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 8px 24px rgba(12,28,54,0.04);display:flex;flex-direction:column}
+.prod-img{width:100%;height:140px;object-fit:cover;border-radius:8px;background:#f4f7ff}
+.prod-body{padding-top:8px;display:flex;flex-direction:column;gap:8px}
+.prod-name{font-weight:700}
+.prod-cat{font-size:0.9rem;color:var(--muted)}
+.prod-price{color:var(--primary);font-weight:800}
+.prod-actions{margin-top:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid rgba(16,24,40,0.06);cursor:pointer}
+.btn.primary{background:linear-gradient(180deg,var(--primary),#265a9a);color:#fff;border:none}
+.cust-cart{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 12px 36px rgba(12,28,54,0.06)}
+.cust-cart-items{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto}
+.cust-cart-item{display:flex;gap:8px;align-items:center}
+.cust-cart-item img{width:48px;height:48px;object-fit:cover;border-radius:6px}
+.cust-cart-total{margin-top:8px;font-weight:700}
+.cust-actions{display:flex;gap:8px;margin-top:8px}
+@media (max-width: 920px) {
+	/* Stack into single column on tablet/mobile */
+	.cust-container { grid-template-columns: 1fr; gap: 12px; }
+	/* Move cart to flow under products for easier access on small screens */
+	.cust-cart {
+		position: static !important;
+		right: auto !important;
+		bottom: auto !important;
+		width: 100% !important;
+		max-width: 100%;
+		margin-top: 8px;
+		box-shadow: 0 10px 30px rgba(12,28,54,0.06);
+	}
+	/* Make product grid slightly denser on small screens */
+	.cust-products { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+}
+
+@media (max-width: 640px) {
+	/* Improve spacing and hit targets on phones */
+	.cust-container { padding: 0 12px; }
+	.cust-products { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+	.prod-img { height: 180px; }
+	.prod-card { padding: 12px; border-radius: 10px; }
+	.prod-body { gap: 6px; }
+	.btn { width: 100%; justify-content: center; padding: 10px 12px; }
+	.prod-actions { display: flex; gap: 8px; flex-direction: column; }
+	.cust-header { padding: 10px 12px; }
+	.cust-search { width: 100%; max-width: 100%; }
+	.cust-categories { gap: 6px; }
+	.cust-cart-items { max-height: 40vh; }
+	.cust-cart { padding: 12px; }
+	.cust-actions { flex-direction: column; }
+}
+
+@media (max-width: 420px) {
+	.prod-img { height: 160px; }
+	.prod-card { padding: 10px; }
+	.cust-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+/* Controls: search + category chips */
+.cust-controls{max-width:1100px;margin:12px auto;padding:0 16px}
+.cust-search{display:block;width:100%;max-width:420px;padding:8px 10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);background:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);margin-bottom:8px}
+.cust-categories{display:flex;gap:8px;flex-wrap:wrap}
+.cust-categories .cat-btn{padding:6px 10px;border-radius:8px;border:1px solid rgba(16,24,40,0.08);background:#fff;cursor:pointer;font-size:0.9rem;color:#111}
+.cust-categories .cat-btn:hover{box-shadow:0 6px 18px rgba(12,28,54,0.04)}
+.cust-categories .cat-btn.active{background:var(--primary);color:#fff;border:none;box-shadow:0 8px 24px rgba(43,108,176,0.12)}
+
+@media(max-width:640px){
+	.cust-search{max-width:100%}
+	.cust-categories{gap:6px}
+}
+
+.hidden{display:none !important}

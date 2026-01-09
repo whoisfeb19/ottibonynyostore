@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OTTIBONYNYO STORE</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="cust-header">
+    <div class="brand">DILLA JELEK</div>
+    <div class="cart-summary">🛒 <span id="custCartCount">0</span></div>
+  </header>
+
+  <!-- Controls: search + categories -->
+  <div class="cust-controls">
+    <input id="custSearch" class="cust-search" type="search" placeholder="Cari produk..." />
+    <div id="custCategories" class="cust-categories"></div>
+  </div>
+
+  <main class="cust-container">
+    <section class="cust-products" id="custProducts"></section>
+
+    <aside class="cust-cart" id="custCart">
+      <h3>Keranjang</h3>
+      <div id="custCartItems" class="cust-cart-items"></div>
+      <div class="cust-cart-total">Total: <strong id="custTotal">Rp0</strong></div>
+      <div class="cust-payment">
+        <label><input type="radio" name="custPayment" value="qris" checked> QRIS</label>
+        <label><input type="radio" name="custPayment" value="cash"> Tunai</label>
+      </div>
+      <div class="cust-actions"><button id="custClear" class="btn">Kosongkan</button><button id="custCheckout" class="btn primary">Order via WA</button></div>
+    </aside>
+  </main>
+
+  <template id="productTpl">
+    <div class="prod-card">
+      <img class="prod-img" src="" alt="" loading="lazy" decoding="async">
+      <div class="prod-body">
+        <div class="prod-name"></div>
+        <div class="prod-cat small muted"></div>
+        <div class="prod-price"></div>
+        <div class="prod-actions"><button class="btn add">Tambah</button></div>
+      </div>
+    </div>
+  </template>
+
+  <script src="/kasir/products.js"></script>
+  <script src="customer-app.js"></script>
+</body>
+</html>
