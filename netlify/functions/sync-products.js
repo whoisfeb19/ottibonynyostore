@@ -7,8 +7,8 @@ exports.handler = async function(event) {
     if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
     const ADMIN_SECRET = process.env.ADMIN_SECRET || '19februari2005';
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
-    const GITHUB_REPO = process.env.GITHUB_REPO || '';
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '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';
+    const GITHUB_REPO = process.env.GITHUB_REPO || 'ottibonynyostore';
     const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
 
     const provided = (event.headers['x-admin-secret'] || event.headers['X-Admin-Secret'] || '');
