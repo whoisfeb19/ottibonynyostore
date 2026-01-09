@@ -609,7 +609,17 @@ async function syncProductsToServer(secret){
       headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret || '' },
       body: JSON.stringify({ products: state.products, message: 'Update from kasir UI' })
     });
-    if(!resp.ok){ const t = await resp.text().catch(()=>null); throw new Error(t || ('HTTP ' + resp.status)); }
+    if(!resp.ok){
+      // try parse JSON error body
+      const text = await resp.text().catch(()=>null);
+      try {
+        const err = text ? JSON.parse(text) : null;
+        const msg = err && err.error ? err.error : (err && err.message ? err.message : text || ('HTTP ' + resp.status));
+        throw new Error(msg);
+      } catch(parseErr){
+        throw new Error(text || ('HTTP ' + resp.status));
+      }
+    }
     const j = await resp.json().catch(()=>null);
     alert('Sinkronisasi berhasil. Tunggu redeploy Netlify sebentar lalu refresh halaman.');
     return j;
