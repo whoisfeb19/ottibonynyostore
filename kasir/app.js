@@ -481,7 +481,7 @@ async function handleAddProductSubmit(){
     try {
       const headers = { 'Content-Type': 'application/json' };
       if(secret) headers['x-admin-secret'] = secret;
-      const resp = await fetch(`/api/update-product`, { method: 'PUT', headers, body: JSON.stringify(payload) });
+  const resp = await fetch(`/.netlify/functions/update-product`, { method: 'PUT', headers, body: JSON.stringify(payload) });
       if(resp.ok){
         const data = await resp.json().catch(()=>null);
         const updated = data && data.product ? data.product : payload;
@@ -516,7 +516,7 @@ async function handleAddProductSubmit(){
     try {
       const headers = { 'Content-Type': 'application/json' };
       if(secret) headers['x-admin-secret'] = secret;
-      const resp = await fetch('/api/add-product', { method: 'POST', headers, body: JSON.stringify({ name, category, price, image }) });
+  const resp = await fetch('/.netlify/functions/add-product', { method: 'POST', headers, body: JSON.stringify({ name, category, price, image }) });
       if(resp.ok){
         const data = await resp.json().catch(()=>null);
         const newProd = data && data.product ? data.product : { id: "p" + Date.now(), name, category, price, image };
@@ -556,7 +556,7 @@ async function deleteProduct(id){
   try {
     const headers = {};
     if(secret) headers['x-admin-secret'] = secret;
-    const resp = await fetch(`/api/delete-product/${encodeURIComponent(id)}`, { method: 'DELETE', headers });
+  const resp = await fetch(`/.netlify/functions/delete-product`, { method: 'DELETE', headers: Object.assign({'Content-Type':'application/json'}, headers), body: JSON.stringify({ id }) });
     if(resp.ok){
       state.products = state.products.filter(p => p.id !== id);
       collectCategories(); renderCategories(); renderCategoryDatalist();
