@@ -502,7 +502,13 @@ async function handleAddProductSubmit(){
       const active = document.querySelector(".category-btn.active"); const cat = active ? active.dataset.cat : "Semua";
       filterByCategory(cat);
       $("#addProductForm").reset(); closeAddProduct();
-      if(confirm('Server tidak tersedia / menolak update. Produk diperbarui di memori saja. Mau download products.js yang berisi data terbaru untuk ganti manual?')) downloadProductsJsFile(state.products);
+      // offer to sync to Netlify function, else fallback to download
+      if(confirm('Server tidak tersedia / menolak update. Produk diperbarui di memori saja. Ingin coba sinkronisasi ke server (Netlify)?')){
+        const sec = (document.querySelector('#adminSecret') || { value: '' }).value.trim();
+        await syncProductsToServer(sec);
+      } else if(confirm('Mau download products.js yang berisi data terbaru untuk ganti manual?')){
+        downloadProductsJsFile(state.products);
+      }
       return;
     }
   } else {
@@ -532,7 +538,12 @@ async function handleAddProductSubmit(){
       const active = document.querySelector(".category-btn.active"); const cat = active ? active.dataset.cat : "Semua";
       filterByCategory(cat);
       $("#addProductForm").reset(); closeAddProduct();
-      if(confirm('Server tidak tersedia. Produk ditambahkan di memori saja. Mau download file products.js yang berisi data terbaru agar bisa mengganti file manual?')) downloadProductsJsFile(state.products);
+      if(confirm('Server tidak tersedia. Produk ditambahkan di memori saja. Ingin coba sinkronisasi ke server (Netlify)?')){
+        const sec = (document.querySelector('#adminSecret') || { value: '' }).value.trim();
+        await syncProductsToServer(sec);
+      } else if(confirm('Mau download file products.js yang berisi data terbaru agar bisa mengganti file manual?')){
+        downloadProductsJsFile(state.products);
+      }
       return;
     }
   }
@@ -565,7 +576,12 @@ async function deleteProduct(id){
     collectCategories(); renderCategories(); renderCategoryDatalist();
     const active = document.querySelector(".category-btn.active"); const cat = active ? active.dataset.cat : "Semua";
     filterByCategory(cat);
-    if(confirm('Server tidak tersedia. Produk dihapus di memori saja. Mau download products.js yang berisi data terbaru agar bisa mengganti file manual?')) downloadProductsJsFile(state.products);
+    if(confirm('Server tidak tersedia. Produk dihapus di memori saja. Ingin coba sinkronisasi ke server (Netlify)?')){
+      const sec = (document.querySelector('#adminSecret') || { value: '' }).value.trim();
+      await syncProductsToServer(sec);
+    } else if(confirm('Mau download products.js yang berisi data terbaru agar bisa mengganti file manual?')){
+      downloadProductsJsFile(state.products);
+    }
     else alert('Produk dihapus sementara di memori.');
     return;
   }
@@ -583,6 +599,25 @@ function downloadProductsJsFile(productsArray){
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+// Try to sync products to server via Netlify Function. Requires Netlify env vars: GITHUB_REPO, GITHUB_TOKEN, ADMIN_SECRET.
+async function syncProductsToServer(secret){
+  try {
+    const resp = await fetch('/.netlify/functions/sync-products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret || '' },
+      body: JSON.stringify({ products: state.products, message: 'Update from kasir UI' })
+    });
+    if(!resp.ok){ const t = await resp.text().catch(()=>null); throw new Error(t || ('HTTP ' + resp.status)); }
+    const j = await resp.json().catch(()=>null);
+    alert('Sinkronisasi berhasil. Tunggu redeploy Netlify sebentar lalu refresh halaman.');
+    return j;
+  } catch(e){
+    console.error('Sync failed', e);
+    alert('Sync ke server gagal: ' + (e.message || e));
+    return null;
+  }
 }
 
 /* ---------- End of file ---------- */
