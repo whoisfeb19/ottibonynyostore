@@ -6,7 +6,7 @@ exports.handler = async function(event) {
   try {
     if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-    const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
+    const ADMIN_SECRET = process.env.ADMIN_SECRET || '19februari2005';
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
     const GITHUB_REPO = process.env.GITHUB_REPO || '';
     const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
@@ -16,7 +16,12 @@ exports.handler = async function(event) {
     if (!GITHUB_TOKEN || !GITHUB_REPO) return { statusCode: 500, body: 'Server not configured' };
 
     const payload = JSON.parse(event.body || '{}');
-    const products = payload.products || [];
+    const products = Array.isArray(payload.products) ? payload.products : [];
+    // Safety guard: do not overwrite remote file with empty product list
+    if (!products || products.length === 0) {
+      console.warn('sync-products: rejected empty products payload');
+      return { statusCode: 400, body: JSON.stringify({ error: 'Empty products payload rejected' }) };
+    }
     const commitMessage = payload.message || 'Update products from UI';
 
     const [owner, repo] = GITHUB_REPO.split('/');
@@ -43,8 +48,9 @@ exports.handler = async function(event) {
     const jsonContent = JSON.stringify(products, null, 2);
     const jsContent = 'const PRODUCTS = ' + JSON.stringify(products, null, 2) + '\n';
 
-    await putFile('kasir/products.json', jsonContent);
-    await putFile('kasir/products.js', jsContent);
+  // perform the commits
+  await putFile('kasir/products.json', jsonContent);
+  await putFile('kasir/products.js', jsContent);
 
     return { statusCode: 200, body: JSON.stringify({ ok: true, message: 'Synced to GitHub' }) };
   } catch (err) {
