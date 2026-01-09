@@ -1,1 +1,44 @@
-const PRODUCTS = []
+const PRODUCTS = [
+  {
+    "id": "p1767789504410",
+    "name": "Es Kopi",
+    "category": "Minuman",
+    "price": 15000,
+    "image": "https://via.placeholder.com/400x300?text=Product"
+  },
+  {
+    "id": "p1767795786336",
+    "name": "Marlboro 16 (Marlong)",
+    "category": "Rokok",
+    "price": 32000,
+    "image": "https://via.placeholder.com/400x300?text=Product"
+  },
+  {
+    "id": "p1767804860185",
+    "name": "Marlboro 12 (Marlong)",
+    "category": "Rokok",
+    "price": 25000,
+    "image": "https://via.placeholder.com/400x300?text=Product"
+  },
+  {
+    "id": "p1767808144272",
+    "name": "Setup Discord",
+    "category": "Jasa Ottibonynyo",
+    "price": 10000,
+    "image": "https://via.placeholder.com/400x300?text=Product"
+  },
+  {
+    "id": "p1767808193594",
+    "name": "Script Website Kasir Toko",
+    "category": "Script",
+    "price": 50000,
+    "image": "https://via.placeholder.com/400x300?text=Product"
+  },
+  {
+    "id": "p1767877570693",
+    "name": "Memek Di Kontolin",
+    "category": "Makanan",
+    "price": 25000,
+    "image": "https://via.placeholder.com/400x300?text=Product"
+  }
+];
